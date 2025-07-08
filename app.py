@@ -54,26 +54,23 @@ if __name__ == "__main__":
     except GameProcessNotFoundError:
         logger.error("❌ Couldn't find the game process.")
         raise
-    except MemoryValueNotFoundError as e:
-        logger.error(f"❌ Couldn't find the {e.pattern} value.")
-        raise
     except Exception:
         logger.exception("❌ Unexpected error occurred")
         raise
 
     logger.info(f"🎮 Found the game PID: {game_pid}")
 
-    nonce_data = read_memory_value(
-        game_pid,
-        NONCE_PATTERN,
-        NONCE_EXPECTED_LENGTH,
-    )
-
-    account_id_data = read_memory_value(
-        game_pid,
-        ACCOUNT_ID_PATTERN,
-        ACCOUNT_ID_EXPECTED_LENGTH,
-    )
+    try:
+        nonce_data = read_memory_value(game_pid, NONCE_PATTERN, NONCE_EXPECTED_LENGTH)
+        account_id_data = read_memory_value(
+            game_pid, ACCOUNT_ID_PATTERN, ACCOUNT_ID_EXPECTED_LENGTH
+        )
+    except MemoryValueNotFoundError as e:
+        logger.error(f"❌ Couldn't find the {e.pattern} value.")
+        raise
+    except Exception:
+        logger.exception("❌ Unexpected error occurred")
+        raise
 
     data = {
         "accountId": account_id_data.decode(),
