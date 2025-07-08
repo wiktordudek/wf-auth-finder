@@ -16,7 +16,7 @@ from exceptions import GameProcessNotFoundError, MemoryValueNotFoundError
 from log import CustomFormatter
 
 
-def find_game_process(name) -> psutil.Process:
+def find_game_process(name: str) -> psutil.Process:
     for process in psutil.process_iter():
         if process.name() == name:
             return process
