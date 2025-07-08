@@ -1,0 +1,2 @@
+psutil==7.0.0
+pymemoryeditor==1.5.23
