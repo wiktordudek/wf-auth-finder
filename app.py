@@ -5,13 +5,7 @@ import logging
 import psutil
 from PyMemoryEditor import OpenProcess
 
-from constants import (
-    ACCOUNT_ID_EXPECTED_LENGTH,
-    ACCOUNT_ID_PATTERN,
-    NONCE_EXPECTED_LENGTH,
-    NONCE_PATTERN,
-    PROCESS_NAME,
-)
+from constants import ACCOUNT_ID_PATTERN, CHUNK_SIZE, NONCE_PATTERN, PROCESS_NAME
 from exceptions import GameProcessNotFoundError, MemoryValueNotFoundError
 from log import CustomFormatter
 
@@ -23,15 +17,20 @@ def find_game_process(name: str) -> psutil.Process:
     raise GameProcessNotFoundError
 
 
-def read_memory_value(process_pid: int, pattern: str, length: int) -> bytes:
+def read_memory_value(process_pid: int, pattern: str) -> bytes:
     pattern_bytes = pattern.encode("utf-8")
     with OpenProcess(pid=process_pid) as process:
         for address in process.search_by_value(
-            pytype=str, bufflength=len(pattern_bytes), value=pattern_bytes
+            pytype=str,
+            bufflength=len(pattern_bytes),
+            value=pattern_bytes,
         ):
-            return process.read_process_memory(
-                address + len(pattern_bytes), bytes, length
+            address_data = process.read_process_memory(
+                address + len(pattern_bytes),
+                bytes,
+                CHUNK_SIZE,
             )
+            return address_data.split(b"&")[0]
     raise MemoryValueNotFoundError(pattern)
 
 
@@ -61,10 +60,8 @@ if __name__ == "__main__":
     logger.info(f"🎮 Found the game PID: {game_pid}")
 
     try:
-        nonce_data = read_memory_value(game_pid, NONCE_PATTERN, NONCE_EXPECTED_LENGTH)
-        account_id_data = read_memory_value(
-            game_pid, ACCOUNT_ID_PATTERN, ACCOUNT_ID_EXPECTED_LENGTH
-        )
+        nonce_data = read_memory_value(game_pid, NONCE_PATTERN)
+        account_id_data = read_memory_value(game_pid, ACCOUNT_ID_PATTERN)
     except MemoryValueNotFoundError as e:
         logger.error(f"❌ Couldn't find the {e.pattern} value.")
         raise
