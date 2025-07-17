@@ -15,7 +15,7 @@ This project automates the extraction of Warframe account parameters (`accountId
 <table>
 <tr>
 <td width="50%">
-✨ with `uv` *(recommended)*
+✨ with <code>uv</code> <i>(recommended)</I>
 
 ```bash
 uv venv
@@ -26,9 +26,9 @@ python3 app.py
 
 </td>
 <td width="50%">
-🐢 or with regular Python's `pip`
+🐢 or with regular Python's <code>pip</code>
 
-```
+```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -45,7 +45,10 @@ Contributions are welcome! If you've found a bug or have a suggestion for improv
 
 ## 📖 License
 
-This project is licensed under the GPLv3 license. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU General Public License v3.0 (GPLv3).\
+You are free to use, modify, and distribute the code under the terms of this license.
+
+See the [LICENSE](LICENSE) file for details.
 
 ## Credits
 
